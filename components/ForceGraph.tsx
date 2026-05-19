@@ -20,7 +20,7 @@ export default function ForceGraph({ data }: { data: GraphData }) {
 
     svg.attr('width', w).attr('height', h)
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10)
+    const color = (g: number) => g === 1 ? '#6366f1' : '#4a4a5a'
 
     const simulation = d3.forceSimulation(data.nodes as any)
       .force('link', d3.forceLink(data.links).id((d: any) => d.id).distance(60))
@@ -41,7 +41,7 @@ export default function ForceGraph({ data }: { data: GraphData }) {
       .data(data.nodes)
       .join('circle')
       .attr('r', d => Math.max(3, Math.min(d.size, 8)))
-      .attr('fill', d => color(String(d.group)) as string)
+      .attr('fill', (d: any) => color(d.group))
       .attr('stroke', '#fff')
       .attr('stroke-width', 1)
       .call(d3.drag<any, any>()
@@ -96,8 +96,8 @@ export default function ForceGraph({ data }: { data: GraphData }) {
     <div ref={containerRef} style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}>
       <svg ref={svgRef} style={{ width: '100%', height: 300 }} />
       <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 11, justifyContent: 'center' }}>
-        <span style={{ color: '#666' }}>🔵 {data.nodes.filter(n => n.group === 1).length} daily notes</span>
-        <span style={{ color: '#666' }}>🟢 {data.nodes.filter(n => n.group === 2).length} topic notes</span>
+        <span style={{ color: '#666' }}>🔵 {data.nodes.filter(n => n.group === 1).length} existing notes</span>
+        <span style={{ color: '#666' }}>⚪ {data.nodes.filter(n => n.group === 2).length} external refs</span>
         <span style={{ color: '#666' }}>🔗 {data.links.length} connections</span>
       </div>
     </div>

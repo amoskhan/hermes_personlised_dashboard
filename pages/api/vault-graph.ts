@@ -12,46 +12,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const files = fs.readdirSync(notesDir).filter((f: string) => f.endsWith('.md'))
-    const noteNames = new Set(files.map((f: string) => f.replace('.md', '')))
 
-    const nodes: { id: string; group: number; size: number }[] = []
-    const links: { source: string; target: string; count: number }[] = []
-    const linkMap = new Map<string, number>()
+    // Collect all unique targets from [[wikilinks]] across ALL files
+    const allTargets = new Set<string>()
+    const fileLinks: { source: string; targets: string[] }[] = []
 
     for (const f of files) {
       const name = f.replace('.md', '')
       const content = fs.readFileSync(pathModule.join(notesDir, f), 'utf-8')
-      const matches = [...content.matchAll(/\[\[([^\]]+)\]\]/g)].map(m => m[1])
+      const matches = [...content.matchAll(/\[\[([^\]]+)\]\]/g)].map(m => m[1].split('|')[0])
+      fileLinks.push({ source: name, targets: matches })
+      for (const t of matches) allTargets.add(t)
+    }
 
-      for (const link of matches) {
-        const target = link.split('|')[0]
-        const key = [name, target].sort().join('::')
+    // Build nodes: all existing files + any referenced targets that aren't files
+    const existingFiles = new Set(files.map((f: string) => f.replace('.md', '')))
+    const nodes: { id: string; group: number; size: number }[] = []
+    
+    for (const f of files) {
+      const name = f.replace('.md', '')
+      nodes.push({ id: name, group: 1, size: 5 }) // existing notes = group 1
+    }
+    
+    // Add external targets (referenced but not a file) as smaller grey nodes
+    for (const target of allTargets) {
+      if (!existingFiles.has(target)) {
+        nodes.push({ id: target, group: 2, size: 2 }) // external = group 2
+      }
+    }
+
+    // Build links (every [[wikilink]] becomes an edge)
+    const links: { source: string; target: string; count: number }[] = []
+    const linkMap = new Map<string, number>()
+    
+    for (const { source, targets } of fileLinks) {
+      for (const target of targets) {
+        const key = `${source}::${target}`
         linkMap.set(key, (linkMap.get(key) || 0) + 1)
       }
     }
-
-    // Build nodes with link counts as sizes
-    const linkCounts = new Map<string, number>()
-    for (const [key, count] of linkMap) {
-      const [a, b] = key.split('::')
-      linkCounts.set(a, (linkCounts.get(a) || 0) + count)
-      linkCounts.set(b, (linkCounts.get(b) || 0) + count)
-    }
-
-    for (const f of files) {
-      const name = f.replace('.md', '')
-      nodes.push({
-        id: name,
-        group: name.startsWith('2026') ? 1 : 2,
-        size: linkCounts.get(name) || 1
-      })
-    }
-
+    
     for (const [key, count] of linkMap) {
       const [source, target] = key.split('::')
-      if (noteNames.has(source) && noteNames.has(target)) {
-        links.push({ source, target, count })
-      }
+      links.push({ source, target, count })
     }
 
     res.json({ nodes, links })
