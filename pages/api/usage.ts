@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export const config = { runtime: 'edge' }
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const key = process.env.OPENROUTER_API_KEY || ''
     let usageMonthly = 0
     let usageWeekly = 0
-    let usageDaily = 0
-    let model = 'deepseek-v4-flash'
-    let limitsRemaining: number | null = null
+    let model = getModelFromProcess() || 'deepseek-v4-flash'
+    let creditsRemaining = 0
 
     if (key) {
       try {
@@ -20,19 +17,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const data = await r.json()
           usageMonthly = data.data?.usage_monthly || 0
           usageWeekly = data.data?.usage_weekly || 0
-          usageDaily = data.data?.usage_daily || 0
-          limitsRemaining = data.data?.limit_remaining ?? null
+          creditsRemaining = data.data?.limit_remaining ?? 0
         }
-      } catch {}
+      } catch (e) {
+        console.error('OpenRouter fetch failed:', e)
+      }
     }
 
-    // Derive daily breakdown from weekly/monthly totals
     const now = new Date()
     const dailyUsage: { date: string; cost: number; tokens: number }[] = []
-    const today = now.getDay() // 0=Sun
     
-    // Distribute weekly usage evenly across weekdays (fixed, no random)
-    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now)
       d.setDate(d.getDate() - i)
@@ -45,15 +39,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
 
-    res.json({
-      totalCost: usageMonthly,
-      creditsRemaining: limitsRemaining ?? 0,
-      model,
-      dailyUsage,
-      isFreeTier: false
-    })
+    res.json({ totalCost: usageMonthly, creditsRemaining, model, dailyUsage, isFreeTier: false })
   } catch (error) {
     console.error('Usage API error:', error)
-    res.json({ totalCost: 0, creditsRemaining: 0, model: 'unknown', dailyUsage: [] })
+    res.status(500).json({ totalCost: 0, creditsRemaining: 0, model: 'unknown', dailyUsage: [] })
   }
+}
+
+function getModelFromProcess(): string | null {
+  try {
+    const m = process.env.HERMES_MODEL || process.env.MODEL || ''
+    if (m) return m
+  } catch {}
+  return null
 }
