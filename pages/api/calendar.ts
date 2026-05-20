@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const data = await proxyRes.json()
     return res.json(data)
   } catch (err: any) {
-    return res.json({
+    return res.status(500).json({
       date: new Date().toISOString().split('T')[0],
       events: [],
       error: err.message
