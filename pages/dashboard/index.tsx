@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
 import ForceGraph from '../../components/ForceGraph'
+import LiveMessages from '../../components/LiveMessages'
 
 type UsageData = {
   totalCost: number
@@ -900,6 +901,9 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* ─── Live Messages ─── */}
+      <LiveMessages />
 
       {/* ─── Models Quick Reference ─── */}
       {models.length > 0 && (
