@@ -25,6 +25,15 @@ type DreamingRec = {
   priority: 'high' | 'medium' | 'low'
 }
 
+type DailySummary = {
+  date: string
+  hasNote: boolean
+  summary: string
+  standup: { weather: string; events: string; tip: string; vault: string } | null
+  weather: string
+  events: { start: string; end: string; title: string }[]
+}
+
 type CalendarEvent = {
   id: string
   summary: string
@@ -57,6 +66,7 @@ export default function Dashboard() {
   const [personas, setPersonas] = useState<{ personas: {id:string,name:string,description:string,emoji:string}[], active: string } | null>(null)
   const [github, setGithub] = useState<{ repos: any[], total_commits: number } | null>(null)
   const [graphData, setGraphData] = useState<any>({ nodes: [], links: [] })
+  const [dailySummary, setDailySummary] = useState<DailySummary | null>(null)
   const [time, setTime] = useState(new Date())
   const [showOnboard, setShowOnboard] = useState(true)
 
@@ -69,6 +79,7 @@ export default function Dashboard() {
     fetch('/api/personas').then(r => r.json()).then(setPersonas).catch(() => {})
     fetch('/api/github').then(r => r.json()).then(setGithub).catch(() => {})
     fetch('/api/vault-graph').then(r => r.json()).then(setGraphData).catch(() => {})
+    fetch('/api/daily-summary').then(r => r.json()).then(setDailySummary).catch(() => {})
     const t = setInterval(() => setTime(new Date()), 1000)
     const refresh = setInterval(() => {
       fetch('/api/usage').then(r => r.json()).then(setUsage).catch(() => {})
@@ -169,6 +180,64 @@ export default function Dashboard() {
           </span>
         )}
       </div>
+
+      {/* ─── Daily Summary Card ─── */}
+      {dailySummary && dailySummary.hasNote && dailySummary.standup && (
+        <div className="glass-card" style={{
+          marginBottom: 20,
+          background: 'linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,15,50,0.92) 100%)',
+          border: '1px solid rgba(99,102,241,0.12)',
+          borderRadius: 14, padding: '18px 22px',
+          position: 'relative', overflow: 'hidden'
+        }}>
+          {/* subtle background glow */}
+          <div style={{
+            position: 'absolute', top: '-40px', right: '-40px',
+            width: 180, height: 180, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <span style={{ fontSize: 24 }}>🌅</span>
+            <div>
+              <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>
+                Good morning, Amos
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+                {dailySummary.date} · From your Morning Standup
+              </p>
+            </div>
+            <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)', background: 'rgba(99,102,241,0.08)', padding: '4px 10px', borderRadius: 20, border: '1px solid rgba(99,102,241,0.1)' }}>
+              📓 Daily note found
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+            {dailySummary.standup.weather && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10, border: '1px solid rgba(99,102,241,0.06)' }}>
+                <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🌤️</span>
+                <div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Weather</div>
+                  <div style={{ fontSize: 12, color: '#c8c8e0', lineHeight: 1.4 }}>{dailySummary.standup.weather}</div>
+                </div>
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10, border: '1px solid rgba(99,102,241,0.06)' }}>
+              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>📅</span>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Events</div>
+                <div style={{ fontSize: 12, color: '#c8c8e0', lineHeight: 1.4 }}>{dailySummary.standup.events || 'No events today'}</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', background: 'rgba(99,102,241,0.04)', borderRadius: 10, border: '1px solid rgba(99,102,241,0.06)' }}>
+              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🎯</span>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>PE Tip</div>
+                <div style={{ fontSize: 12, color: '#c8c8e0', lineHeight: 1.4 }}>{dailySummary.standup.tip || 'No tip today'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── TOP ROW: Model Status + Memory ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
