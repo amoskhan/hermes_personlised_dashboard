@@ -26,6 +26,16 @@ SUGGESTION_POOLS = {
         "Research one new PE pedagogy method 📖",
         "Plan a mini fitness circuit using only cones & hoops 🏋️",
         "Think about one student who needs extra support — plan an adaptation",
+        "Review NAPFA test results — spot trends in your class 📊",
+        "Draft a low-equipment PE lesson (cones + marked floor only) 🎯",
+        "Plan a 5-min cool-down routine with stretching cues 🧘",
+        "Try 1 new SEL check-in question for your next class 💬",
+        "Map a skill progression for throwing & catching across P1-P4 🎯",
+        "Record a quick voice note on lesson flow — what to tweak next time 🎙️",
+        "Design a simple peer-assessment card for gymnastics 🤸",
+        "Plan a rainy-day indoor PE backup lesson ☔",
+        "Review safety considerations for your upcoming PE activity ⚠️",
+        "Sketch a 15-min inclusive game for students with varying abilities 🤝",
     ],
     "research": [
         "Search arXiv for 'exercise physiology children singapore' 🔬",
@@ -38,6 +48,16 @@ SUGGESTION_POOLS = {
         "Review your sports science wiki — what's missing? 📚",
         "Search for 'VO2max children pe games' — practical applications 📊",
         "Write a one-paragraph summary of a paper for your notes ✍️",
+        "Search Google Scholar for 'physical literacy assessment singapore' 🎓",
+        "Read the methodology section of a recent exercise physiology paper 🔬",
+        "Find a study on classroom-based physical activity breaks 🪑",
+        "Compare 3 definitions of physical literacy — which resonates? 📖",
+        "Search for 'sedentary behaviour primary school intervention' 🪑",
+        "Read about the latest Singapore PE syllabus changes 📋",
+        "Find a paper on motivation in PE — self-determination theory 🧠",
+        "Look up 'recess physical activity' interventions in Asian contexts 🌏",
+        "Cross-reference a sports science finding with your own teaching 🧪",
+        "Write a mini lit review (3 papers) on one coaching method 📚",
     ],
     "coding": [
         "Spend 30 min on the dashboard — pick one UI improvement 🖥️",
@@ -50,6 +70,16 @@ SUGGESTION_POOLS = {
         "Explore VPS logs for recurring errors 🔍",
         "Optimise one API endpoint for speed ⚡",
         "Add error handling to a dashboard API that's missing it 🛡️",
+        "Review your package.json — any unused deps to prune? 🧹",
+        "Write a quick unit test for one API route 🧪",
+        "Check for TypeScript strict-mode violations in the dashboard 📋",
+        "Add a loading skeleton to any widget that's missing one 💀",
+        "Set up a Prettier config for consistent formatting ✨",
+        "Add keyboard shortcut hints to the dashboard ⌨️",
+        "Review one Python script — add docstrings and error handling 🐍",
+        "Check cron job output logs — any failures to fix? ⏰",
+        "Bump outdated npm packages with `npm outdated` 📦",
+        "Write a small shell alias or utility for daily use 🛠️",
     ],
     "vault": [
         "Link two related notes that aren't connected yet 🔗",
@@ -62,6 +92,16 @@ SUGGESTION_POOLS = {
         "Run vault health check and review stats 📊",
         "Add today's daily note while it's fresh in mind ✏️",
         "Consolidate scattered notes on one topic into a single page 📋",
+        "Write a minimum-viable note on a new topic (just 3 bullet points) 📝",
+        "Rename a poorly titled note for better searchability 🏷️",
+        "Merge two overlapping notes into one cohesive page 🔗",
+        "Review your template notes — update if outdated 📄",
+        "Create a daily note template for teaching days 📋",
+        "Add metadata (tags/aliases) to 3 orphan notes 🏷️",
+        "Write a dataview query to expose a hidden pattern 🔍",
+        "Review last month's daily notes — extract 2 insights 💡",
+        "Clean up empty or stub notes from the vault 🧹",
+        "Backlink a research finding to a teaching observation 📎",
     ],
     "finance": [
         "Review your monthly spending so far 💰",
@@ -70,6 +110,15 @@ SUGGESTION_POOLS = {
         "Review subscriptions — any to cancel? 🔄",
         "Check CPF/savings progress toward HDB goal 🏠",
         "Set aside 10 min to review monthly budget 📋",
+        "Compare actual vs budgeted spending for this month 📊",
+        "Review your insurance coverage — anything to adjust? 🛡️",
+        "Check if any recurring bills increased this month 📈",
+        "Calculate your monthly savings rate 📊",
+        "Review your investment portfolio allocation 📈",
+        "Set one financial goal for next month 🎯",
+        "Check for unused gift cards or credits 💳",
+        "Review your recurring transfer setup — still correct? 🔄",
+        "Plan your next big expense — timeline & budget 🗓️",
     ],
     "wellness": [
         "Take a 10-min walk between tasks today 🚶",
@@ -78,6 +127,15 @@ SUGGESTION_POOLS = {
         "Plan your meals for the rest of the week 🥗",
         "Log your sleep and activity for today 📱",
         "Breathing exercise before bed — 4-7-8 technique 🧘",
+        "Step away from screens for 15 min after work 👀",
+        "Do a 5-min meditation before your next class 🧘",
+        "Prep a healthy snack for tomorrow 🍎",
+        "Check your posture during screen time 🧍",
+        "Get 7+ hours of sleep tonight — set a wind-down alarm 😴",
+        "Do 10 min of sun exposure before noon ☀️",
+        "Take the stairs instead of the lift today 🚶",
+        "Write down 3 things you're grateful for today 🙏",
+        "Do a quick neck & shoulder release — desk stress 🧘",
     ],
     "badminton": [
         "Review your footwork drills — one to practice 🏸",
@@ -85,6 +143,16 @@ SUGGESTION_POOLS = {
         "Watch a 5-min pro match highlight — note one technique 🎥",
         "Pack your badminton bag for tomorrow's session 🎒",
         "Practice 10 min of shadow footwork at home 👣",
+        "Analyse your last game — one shot to improve 📹",
+        "Try a new serve variation this session 🎯",
+        "Record your smash technique — compare to pro form 📱",
+        "Plan a 15-min drill session focused on recovery steps 🏃",
+        "Review grip pressure — are you holding too tight? 🤔",
+        "Watch a defensive rally — note footwork patterns 👀",
+        "Practice net play: 50 cross-court net shots 🎯",
+        "Check racket string tension — due for restring? 🏸",
+        "Stretch hips and shoulders before next game 🤸",
+        "Plan a training session: 3 drills, 1 game situation 📋",
     ],
     "career": [
         "Review GEO2→GEO3 progress — next milestone? 🎯",
@@ -92,6 +160,16 @@ SUGGESTION_POOLS = {
         "Look up MOE PD courses for this term 🎓",
         "Update LinkedIn/portfolio with a recent accomplishment 📋",
         "Think about one non-MOE path (wellness/coaching/edtech) 🤔",
+        "Write a short reflection on your teaching philosophy ✍️",
+        "Review NIE module requirements — any coming deadlines? 📅",
+        "Reach out to a mentor for a quick check-in 📞",
+        "Read one article on teacher wellbeing in Singapore 📖",
+        "Draft a bullet-point lesson observation for your portfolio 📝",
+        "Check MOE's PD calendar — any free workshops? 🗓️",
+        "Write down 3 career goals for this year 🎯",
+        "Review your CV — one bullet point to refine 📄",
+        "Think about a CCA you could contribute to next term 🏫",
+        "Plan a conversation with your reporting officer 💬",
     ],
 }
 
@@ -192,10 +270,23 @@ def get_weekly_summary():
         "days": [{"date": d["date"], "theme": d["theme"], "day": d["day"]} for d in days]
     }
 
-def generate_suggestions(today, weekly, yesterday_items):
+def extract_completed_tasks(text):
+    """Extract tasks that were marked as completed [x] from a note."""
+    if not text:
+        return []
+    completed = []
+    for line in text.split("\n"):
+        s = line.strip()
+        if s.startswith("- [x]") or s.startswith("- [X]"):
+            completed.append(s.replace("- [x]", "").replace("- [X]", "").strip().lower())
+        elif s.startswith("[x]") or s.startswith("[X]"):
+            completed.append(s.replace("[x]", "").replace("[X]", "").strip().lower())
+    return completed
+
+def generate_suggestions(today, weekly, yesterday_items, completed_tasks=None):
     dt = today
     day_idx = dt.weekday()
-    rng = random.Random(f"{date_str(dt)}-v2")
+    rng = random.Random(f"{date_str(dt)}-v3")  # bumped seed for new version
     
     if day_idx == 5:
         focus = "weekend"
@@ -226,6 +317,12 @@ def generate_suggestions(today, weekly, yesterday_items):
         rng.shuffle(pool)
         for s in pool:
             if s not in used_texts:
+                # Skip if suggestion matches a recently completed task
+                s_lower = s.lower()[:60]
+                if completed_tasks and any(
+                    s_lower in t or t[:60] in s_lower for t in completed_tasks
+                ):
+                    continue
                 suggestions.append({"category": cat, "text": s})
                 used_texts.add(s)
                 break
@@ -257,8 +354,16 @@ def main():
     # Weekly trends
     weekly = get_weekly_summary()
     
-    # Fresh daily suggestions
-    suggestions = generate_suggestions(today, weekly, yesterday_items)
+    # Check for recently completed tasks (scan last 3 days)
+    completed_tasks = []
+    for i in range(1, 4):
+        d = today - timedelta(days=i)
+        note = read_note(date_str(d))
+        if note:
+            completed_tasks.extend(extract_completed_tasks(note))
+
+    # Fresh daily suggestions (filtered to exclude completed tasks)
+    suggestions = generate_suggestions(today, weekly, yesterday_items, completed_tasks)
     
     # Today's theme
     today_theme = extract_day_theme(today_note) if today_note else ""
