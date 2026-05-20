@@ -462,11 +462,11 @@ export default function ForceGraph({ data }: { data: GraphData }) {
         )}
       </div>
 
-      {/* Graph + Preview */}
+      {/* Graph + Node list */}
       <div style={{ display: 'flex', gap: 12 }}>
         {/* Graph */}
         <div ref={containerRef} style={{
-          flex: selectedNote && noteContent ? '1 1 55%' : (showNodeList ? '1 1 65%' : 1),
+          flex: showNodeList && !selectedNote ? '1 1 65%' : 1,
           borderRadius: 8, overflow: 'hidden', position: 'relative',
           minHeight: dimensions.h, background: 'rgba(0,0,0,0.15)',
           border: '1px solid rgba(255,255,255,0.03)'
@@ -490,116 +490,127 @@ export default function ForceGraph({ data }: { data: GraphData }) {
           )}
         </div>
 
-        {/* Note Preview Panel (slides in on click) */}
+        {/* Note Preview — Fullscreen Modal */}
         {selectedNote && (
           <div style={{
-            flex: '0 0 35%', maxHeight: 500, overflowY: 'auto',
-            borderRadius: 8, border: '1px solid rgba(34,197,94,0.15)',
-            background: 'rgba(0,0,0,0.2)', padding: '12px',
-          }}>
-            {loadingNote ? (
-              <div style={{ color: '#8888aa', fontSize: 12, textAlign: 'center', padding: 20 }}>Loading...</div>
-            ) : noteError ? (
-              <div style={{ color: '#ef4444', fontSize: 12 }}>⚠️ {noteError}</div>
-            ) : noteContent && (
-              <>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#22c55e', marginBottom: 2 }}>
-                      📄 {shortId(noteContent.name)}
-                    </div>
-                    <div style={{ fontSize: 10, color: '#666', display: 'flex', gap: 8 }}>
-                      <span>{noteContent.totalLines} lines</span>
-                      {noteContent.backlinks.length > 0 && <span>{noteContent.backlinks.length} backlink{noteContent.backlinks.length !== 1 ? 's' : ''}</span>}
-                    </div>
-                  </div>
-                  <button onClick={() => { setSelectedNote(null); setFocusedNode(null) }}
-                    style={{
-                      background: 'rgba(255,255,255,0.04)', border: 'none',
-                      color: '#666', cursor: 'pointer', fontSize: 14, padding: '2px 6px', borderRadius: 4
-                    }}>✕</button>
-                </div>
-
-                {noteContent.tags.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
-                    {noteContent.tags.map((t, i) => (
-                      <span key={i} style={{
-                        fontSize: 9, padding: '2px 7px',
-                        background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.1)',
-                        borderRadius: 4, color: '#8888aa'
-                      }}>#{t}</span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Description */}
-                {noteContent.description && (
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 1000,
+            background: 'rgba(0,0,0,0.75)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 20,
+          }} onClick={() => { setSelectedNote(null); setFocusedNode(null) }}>
+            <div style={{
+              background: '#0d0d16',
+              border: '1px solid rgba(34,197,94,0.2)',
+              borderRadius: 16,
+              width: '100%',
+              maxWidth: 800,
+              maxHeight: '90vh',
+              display: 'flex', flexDirection: 'column',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            }} onClick={e => e.stopPropagation()}>
+              {loadingNote ? (
+                <div style={{ padding: 40, textAlign: 'center', color: '#8888aa', fontSize: 14 }}>Loading...</div>
+              ) : noteError ? (
+                <div style={{ padding: 40, textAlign: 'center', color: '#ef4444', fontSize: 14 }}>⚠️ {noteError}</div>
+              ) : noteContent && (
+                <>
+                  {/* Header */}
                   <div style={{
-                    fontSize: 11, color: '#aaa', marginBottom: 10, lineHeight: 1.5,
-                    padding: '8px 10px', borderRadius: 6, background: 'rgba(99,102,241,0.03)',
-                    border: '1px solid rgba(99,102,241,0.06)',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)',
                   }}>
-                    {noteContent.description}
-                  </div>
-                )}
-
-                {/* Full summary/content */}
-                {noteContent.summary && (
-                  <div style={{
-                    fontSize: 11, color: '#cccce0', lineHeight: 1.6, marginBottom: 12,
-                    whiteSpace: 'pre-wrap', fontFamily: "'JetBrains Mono', monospace",
-                    background: 'rgba(0,0,0,0.15)', borderRadius: 6, padding: '10px',
-                    maxHeight: 300, overflowY: 'auto',
-                  }}>
-                    {noteContent.summary}
-                  </div>
-                )}
-
-                {/* Outgoing links */}
-                {noteContent.links.length > 0 && (
-                  <div style={{ marginBottom: 10 }}>
-                    <div style={{ fontSize: 10, color: '#8888aa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>
-                      🔗 Links to ({noteContent.links.length})
+                    <div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#22c55e', marginBottom: 2 }}>
+                        📄 {noteContent.name}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#666', display: 'flex', gap: 12 }}>
+                        <span>{noteContent.totalLines} lines</span>
+                        {noteContent.tags.length > 0 && <span>{noteContent.tags.length} tags</span>}
+                        {noteContent.links.length > 0 && <span>🔗 {noteContent.links.length} links</span>}
+                        {noteContent.backlinks.length > 0 && <span>↩️ {noteContent.backlinks.length} backlinks</span>}
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {noteContent.links.slice(0, 16).map((link, i) => (
+                    <button onClick={() => { setSelectedNote(null); setFocusedNode(null) }}
+                      style={{
+                        background: 'rgba(255,255,255,0.04)', border: 'none',
+                        color: '#888', cursor: 'pointer', fontSize: 22,
+                        padding: '4px 10px', borderRadius: 8, lineHeight: 1,
+                      }}>✕</button>
+                  </div>
+
+                  {/* Tags */}
+                  {noteContent.tags.length > 0 && (
+                    <div style={{ padding: '10px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                      {noteContent.tags.map((t, i) => (
                         <span key={i} style={{
-                          fontSize: 10, padding: '2px 7px',
-                          background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.08)',
-                          borderRadius: 4, color: '#06b6d4', cursor: 'pointer',
-                        }} onClick={() => setSelectedNote(link)}>
-                          {shortId(link)}
-                        </span>
+                          fontSize: 10, padding: '3px 8px',
+                          background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.1)',
+                          borderRadius: 4, color: '#8888aa'
+                        }}>#{t}</span>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Backlinks */}
-                {noteContent.backlinks.length > 0 && (
-                  <div>
-                    <div style={{ fontSize: 10, color: '#8888aa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>
-                      ↩️ Linked from ({noteContent.backlinks.length})
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {noteContent.backlinks.slice(0, 16).map((bl, i) => (
-                        <span key={i} style={{
-                          fontSize: 10, padding: '2px 7px',
-                          background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.08)',
-                          borderRadius: 4, color: '#f59e0b', cursor: 'pointer',
-                        }} onClick={() => setSelectedNote(bl)}>
-                          {shortId(bl)}
-                        </span>
-                      ))}
-                    </div>
+                  {/* Content body */}
+                  <div style={{
+                    flex: 1, overflowY: 'auto', padding: '16px 20px',
+                    fontSize: 13, lineHeight: 1.7, color: '#d0d0e0',
+                    whiteSpace: 'pre-wrap', fontFamily: "'JetBrains Mono', 'Menlo', monospace",
+                  }}>
+                    {noteContent.summary || noteContent.description || (
+                      <span style={{ color: '#666', fontStyle: 'italic' }}>Empty note</span>
+                    )}
                   </div>
-                )}
 
-                {!noteContent.links.length && !noteContent.backlinks.length && !noteContent.summary && !noteContent.description && (
-                  <div style={{ color: '#666', fontSize: 11, fontStyle: 'italic' }}>Empty note</div>
-                )}
-              </>
-            )}
+                  {/* Links & Backlinks footer */}
+                  {(noteContent.links.length > 0 || noteContent.backlinks.length > 0) && (
+                    <div style={{
+                      padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.06)',
+                      display: 'flex', gap: 20,
+                    }}>
+                      {noteContent.links.length > 0 && (
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: '#8888aa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                            🔗 Links to ({noteContent.links.length})
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {noteContent.links.slice(0, 20).map((link, i) => (
+                              <span key={i} style={{
+                                fontSize: 11, padding: '3px 8px',
+                                background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.08)',
+                                borderRadius: 4, color: '#06b6d4', cursor: 'pointer',
+                              }} onClick={() => setSelectedNote(link)}>
+                                {shortId(link)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {noteContent.backlinks.length > 0 && (
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: '#8888aa', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                            ↩️ Linked from ({noteContent.backlinks.length})
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {noteContent.backlinks.slice(0, 20).map((bl, i) => (
+                              <span key={i} style={{
+                                fontSize: 11, padding: '3px 8px',
+                                background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.08)',
+                                borderRadius: 4, color: '#f59e0b', cursor: 'pointer',
+                              }} onClick={() => setSelectedNote(bl)}>
+                                {shortId(bl)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         )}
 
