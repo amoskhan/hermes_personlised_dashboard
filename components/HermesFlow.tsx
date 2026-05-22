@@ -100,9 +100,9 @@ export default function HermesFlow() {
         </div>
       </div>
 
-      <div style={{ position: 'relative', width: '100%', paddingBottom: '50%', background: 'radial-gradient(ellipse at center, #0f172a 0%, #030712 100%)' }}>
+      <div style={{ position: 'relative', width: '100%', paddingBottom: '40%', background: 'radial-gradient(ellipse at center, #0f172a 0%, #030712 100%)', minHeight: '300px' }}>
         <svg viewBox="0 0 1040 420" preserveAspectRatio="xMidYMid meet"
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'block' }}>
           <defs>
           <filter id="hf-shadow">
             <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000" floodOpacity="0.7" />
