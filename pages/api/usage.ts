@@ -221,6 +221,15 @@ function distributeCost(
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // On Vercel: proxy to VPS for accurate data (agent logs, env vars, OpenRouter API)
+  if (process.env.VERCEL || !require('fs').existsSync('/home/ubuntu/.hermes/config.yaml')) {
+    try {
+      const proxyRes = await fetch('http://43.156.249.23:3001/api/usage', { signal: AbortSignal.timeout(10000) })
+      const data = await proxyRes.json()
+      return res.json(data)
+    } catch { /* fall through to zero-data response */ }
+  }
+
   const currentModel = getCurrentModel()
 
   // Fetch OpenRouter real spend
