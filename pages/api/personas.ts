@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // GET: return all personas + active one
   if (req.method === 'GET') {
     try {
-      const raw = execSync('python3 /home/ubuntu/visual-os/scripts/get-personas.py', {
+      const raw = execSync('/home/ubuntu/.hermes/hermes-agent/venv/bin/python /home/ubuntu/visual-os/scripts/get-personas.py', {
         timeout: 10000,
         encoding: 'utf-8'
       })

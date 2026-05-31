@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const raw = execSync('python3 /home/ubuntu/visual-os/scripts/get-github-activity.py', {
+    const raw = execSync('/home/ubuntu/.hermes/hermes-agent/venv/bin/python /home/ubuntu/visual-os/scripts/get-github-activity.py', {
       timeout: 30000,
       encoding: 'utf-8'
     })

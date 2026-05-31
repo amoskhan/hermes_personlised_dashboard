@@ -58,6 +58,21 @@ type CalendarEvent = {
   isAllDay: boolean
 }
 
+type WeekDay = {
+  date: string
+  dayName: string
+  dayAbbr: string
+  isToday: boolean
+  events: CalendarEvent[]
+}
+
+type CalendarData = {
+  range?: string
+  weekDays?: WeekDay[]
+  date?: string
+  events?: CalendarEvent[]
+}
+
 type ModelInfo = {
   id: string
   name: string
@@ -77,7 +92,7 @@ export default function Dashboard() {
   const [vault, setVault] = useState<VaultStats | null>(null)
   const [dreaming, setDreaming] = useState<DreamingRec[]>([])
   const [models, setModels] = useState<ModelInfo[]>([])
-  const [calendar, setCalendar] = useState<{ date: string; events: CalendarEvent[] } | null>(null)
+  const [calendar, setCalendar] = useState<CalendarData | null>(null)
   const [personas, setPersonas] = useState<{ personas: {id:string,name:string,description:string,emoji:string}[], active: string } | null>(null)
   const [github, setGithub] = useState<{ repos: any[], total_commits: number } | null>(null)
   const [graphData, setGraphData] = useState<any>({ nodes: [], links: [] })
@@ -92,7 +107,7 @@ export default function Dashboard() {
     fetch('/api/vault-stats').then(r => r.json()).then(setVault).catch(() => {})
     fetch('/api/dreaming').then(r => r.json()).then(setDreaming).catch(() => {})
     fetch('/api/models').then(r => r.json()).then(setModels).catch(() => {})
-    fetch('/api/calendar').then(r => r.json()).then(setCalendar).catch(() => {})
+    fetch('/api/calendar?range=week').then(r => r.json()).then(setCalendar).catch(() => {})
     fetch('/api/personas').then(r => r.json()).then(setPersonas).catch(() => {})
     fetch('/api/github').then(r => r.json()).then(setGithub).catch(() => {})
     fetch('/api/vault-graph').then(r => r.json()).then(setGraphData).catch(() => {})
@@ -283,52 +298,101 @@ export default function Dashboard() {
             {/* ─── Column 2: This Week ─── */}
             <div style={{
               padding: '12px 14px', borderRadius: 10,
-              background: 'rgba(99,102,241,0.03)', border: '1px solid rgba(99,102,241,0.06)'
+              background: 'rgba(99,102,241,0.03)', border: '1px solid rgba(99,102,241,0.06)',
+              maxHeight: 360, overflowY: 'auto'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                <span style={{ fontSize: 14 }}>📊</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                <span style={{ fontSize: 14 }}>📅</span>
                 <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                   This Week
                 </span>
                 <span style={{ marginLeft: 'auto', fontSize: 9, color: 'var(--text-muted)' }}>
-                  {dailySummary.weekly?.activeDays || 0} days logged
+                  {calendar?.weekDays?.reduce((sum, d) => sum + d.events.length, 0) || 0} events
                 </span>
               </div>
-              <div style={{ fontSize: 11, color: 'var(--accent-indigo)', fontWeight: 500, marginBottom: 8 }}>
-                {dailySummary.weekly?.summary || 'No data'}
-              </div>
-              {dailySummary.weekly?.tags && dailySummary.weekly.tags.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                  {dailySummary.weekly.tags.slice(0, 4).map((t, i) => (
-                    <span key={i} style={{
-                      fontSize: 9, padding: '2px 7px',
-                      background: 'rgba(99,102,241,0.08)',
-                      border: '1px solid rgba(99,102,241,0.1)',
-                      borderRadius: 4, color: 'var(--text-secondary)'
-                    }}>
-                      #{t.tag} ×{t.count}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {dailySummary.weekly?.days && dailySummary.weekly.days.length > 0 && (
-                <div style={{ marginTop: 8, display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-                  {dailySummary.weekly.days.slice(0, 7).map((d, i) => {
-                    const hasTheme = !!d.theme
+
+              {calendar?.weekDays ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {calendar.weekDays.map((day, di) => {
+                    const hasEvents = day.events.length > 0
                     return (
-                      <span key={i} style={{
-                        width: 22, height: 22, borderRadius: 6,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 9, fontWeight: 600,
-                        background: hasTheme ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.03)',
-                        color: hasTheme ? 'var(--accent-indigo)' : 'var(--text-muted)',
-                        border: `1px solid ${hasTheme ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.04)'}`,
-                        cursor: 'pointer'
-                      }} title={d.theme || d.day}>
-                        {d.day[0]}
-                      </span>
+                      <div key={di} style={{
+                        padding: '7px 10px', borderRadius: 8,
+                        background: day.isToday
+                          ? 'rgba(99,102,241,0.12)'
+                          : hasEvents ? 'rgba(255,255,255,0.03)' : 'transparent',
+                        border: day.isToday
+                          ? '1px solid rgba(99,102,241,0.25)'
+                          : hasEvents ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
+                        transition: 'all 0.2s'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: hasEvents ? 6 : 0 }}>
+                          <span style={{
+                            fontSize: 11, fontWeight: day.isToday ? 700 : 500,
+                            color: day.isToday ? 'var(--accent-indigo)' : 'var(--text-secondary)',
+                            minWidth: 26
+                          }}>
+                            {day.dayAbbr}
+                          </span>
+                          <span style={{
+                            fontSize: 10, color: day.isToday ? 'var(--accent-indigo)' : 'var(--text-muted)',
+                            opacity: day.isToday ? 1 : 0.7
+                          }}>
+                            {day.date.split('-').slice(1).join('/')}
+                          </span>
+                          {day.isToday && (
+                            <span style={{
+                              marginLeft: 'auto', fontSize: 9, fontWeight: 600,
+                              padding: '1px 6px', borderRadius: 10,
+                              background: 'rgba(99,102,241,0.2)', color: 'var(--accent-indigo)'
+                            }}>Today</span>
+                          )}
+                        </div>
+                        {hasEvents && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            {day.events.map((evt, ei) => {
+                              const timeStr = evt.isAllDay
+                                ? 'all day'
+                                : evt.start.split('T')[1]?.substring(0, 5) || ''
+                              const hasEmoji = /[\u{1F300}-\u{1FAFF}]/u.test(evt.summary)
+                              const summaryClean = evt.summary.replace(/^[\u{1F300}-\u{1FAFF}]\s*/u, '')
+                              const emoji = evt.summary.match(/[\u{1F300}-\u{1FAFF}]/u)?.[0]
+                              return (
+                                <div key={ei} style={{
+                                  display: 'flex', gap: 6, alignItems: 'flex-start',
+                                  padding: '5px 8px', borderRadius: 6,
+                                  background: 'rgba(99,102,241,0.05)',
+                                  border: '1px solid rgba(99,102,241,0.08)',
+                                  fontSize: 11
+                                }}>
+                                  <span style={{ flexShrink: 0, fontSize: 12, marginTop: 1 }}>
+                                    {emoji || '📌'}
+                                  </span>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{
+                                      color: '#cccce0', fontWeight: 500,
+                                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                                    }}>
+                                      {summaryClean}
+                                    </div>
+                                    {!evt.isAllDay && timeStr && (
+                                      <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 1 }}>
+                                        {timeStr}{evt.end ? ` - ${evt.end.split('T')[1]?.substring(0, 5)}` : ''}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
                     )
                   })}
+                </div>
+              ) : (
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic', padding: '20px 0', textAlign: 'center' }}>
+                  {dailySummary?.weekly?.summary || 'Loading calendar…'}
                 </div>
               )}
             </div>
@@ -810,46 +874,46 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div className="stat-tile">
               <div className="label">This Week's Focus</div>
-              <div className="value small" style={{ color: 'var(--accent-indigo)' }}>
-                Pre-competition
+              <div className="value small" style={{ color: 'var(--accent-emerald)' }}>
+                Recovery
               </div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-                Light plyos, footwork, match play
+                Light movement, rehab, reflection
               </div>
             </div>
             <div className="stat-tile">
               <div className="label">Sessions This Week</div>
               <div className="value small" style={{ color: 'var(--accent-cyan)' }}>{badmintonEvents.length} sessions</div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-                {badmintonEvents.length > 0 ? `${badmintonEvents[0].summary} tonight` : 'No sessions this week'}
+                {badmintonEvents.length > 0 ? `${badmintonEvents[0].summary}` : 'No sessions this week'}
               </div>
             </div>
           </div>
 
-          {/* Competition countdown */}
+          {/* Competition complete */}
           <div style={{
             marginTop: 14, padding: '12px 14px', borderRadius: 10,
-            background: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(239,68,68,0.05) 100%)',
-            border: '1px solid rgba(245,158,11,0.15)',
+            background: 'linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(99,102,241,0.04) 100%)',
+            border: '1px solid rgba(34,197,94,0.12)',
             display: 'flex', alignItems: 'center', gap: 12
           }}>
-            <span style={{ fontSize: 28 }}>🏆</span>
+            <span style={{ fontSize: 28 }}>✅</span>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--accent-amber)' }}>
-                Competition Countdown
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--accent-emerald)' }}>
+                Competition Done!
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-                Sunday 24 May • Rest & sharpen this week
+                Sunday 24 May • Now on recovery week
               </div>
             </div>
             <span style={{
               marginLeft: 'auto', fontSize: 10, fontWeight: 600,
               padding: '4px 10px', borderRadius: 20,
-              background: 'rgba(245,158,11,0.15)',
-              color: 'var(--accent-amber)',
-              border: '1px solid rgba(245,158,11,0.2)'
+              background: 'rgba(34,197,94,0.12)',
+              color: 'var(--accent-emerald)',
+              border: '1px solid rgba(34,197,94,0.2)'
             }}>
-              D-2
+              D+7
             </span>
           </div>
 

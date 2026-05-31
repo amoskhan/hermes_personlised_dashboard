@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // On VPS: run local Python script
     if (host.includes('localhost') || host.includes('43.156.249.23') || host.includes('127.0.0.1')) {
       const { execSync } = require('child_process')
-      const raw = execSync('python3 /home/ubuntu/visual-os/scripts/daily-summary.py', {
+      const raw = execSync('/home/ubuntu/.hermes/hermes-agent/venv/bin/python /home/ubuntu/visual-os/scripts/daily-summary.py', {
         timeout: 10000,
         encoding: 'utf-8'
       })
